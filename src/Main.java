@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Main {
     static int currentUser = -1 ;
+    static boolean registered = false;
     public class Login implements Serializable{
 
 
@@ -66,6 +67,7 @@ public class Main {
         void register() {
             if (verifyCredentials(this.username, this.password, this.email)) {
                 success();
+                registered = true;
             } else {
                 fail();
             }
@@ -279,42 +281,52 @@ public class Main {
                 return;
             }
         }
-
-        System.out.println("Hello, Sir!");
-        System.out.println("What would you like to do?");
-        System.out.println("1. Login");
-        System.out.println("2. Sign Up");
-        System.out.println("3. Track income");
-        System.out.println("4. Set budget");
-        System.out.println("5. Set reminder");
-        System.out.println("6. Track expense");
-        System.out.print("Enter your choice: ");
+        int choice ;
         Scanner scan = new Scanner(System.in);
-        int choice = scan.nextInt();
-
+        while(currentUser==-1){
+            System.out.println("Hello, Sir!");
+            System.out.println("1 - Sign up");
+            System.out.println("2 - Log in");
+            choice = scan.nextInt();
+            if (choice == 1) {
+                System.out.print("Enter username: ");
+                String username = scan.next();
+                System.out.print("Enter email: ");
+                String email = scan.next();
+                System.out.print("Enter password: ");
+                String password = scan.next();
+                SignUp signUp = new SignUp(SignUps.size(), username, password, email);
+                signUp.register();
+                if(!registered)
+                    continue;
+                SignUps.add(signUp);
+                System.out.println("====================");
+                System.out.println("Log in your account");
+                System.out.println("====================");
+                System.out.print("Enter username: ");
+                username = scan.next();
+                System.out.print("Enter password: ");
+                password = scan.next();
+                Login.login(username, password, SignUps);
+            } else if (choice == 2) {
+                System.out.print("Enter username: ");
+                String username = scan.next();
+                System.out.print("Enter password: ");
+                String password = scan.next();
+                Login.login(username, password, SignUps);
+            }
+        }
+        System.out.println("What would you like to do?");
+        System.out.println("1. Track income");
+        System.out.println("2. Set budget");
+        System.out.println("3. Set reminder");
+        System.out.println("4. Track expense");
+        System.out.print("Enter your choice: ");
+        choice = scan.nextInt();
+        choice += 2;
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd ");
         String formattedDateTime = currentDateTime.format(formatter);
-
-        if(choice == 1){
-            System.out.print("Enter username: ");
-            String username = scan.next();
-            System.out.print("Enter password: ");
-            String password = scan.next();
-            Login.login(username, password,SignUps);
-        }
-        if(choice == 2){
-            System.out.print("Enter username: ");
-            String username = scan.next();
-            System.out.print("Enter email: ");
-            String email = scan.next();
-            System.out.print("Enter password: ");
-            String password = scan.next();
-            SignUp signUp = new SignUp(SignUps.size(), username, password, email);
-            signUp.register();
-            SignUps.add(signUp);
-        }
-
         if(choice == 3){
             System.out.print("Enter source: ");
             String source = scan.next();
