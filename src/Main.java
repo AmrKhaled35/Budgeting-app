@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Main class containing the Login inner class and global user state.
+ * This is the main application class that coordinates all logic.
  */
 public class Main {
     /** The ID of the currently logged-in user. -1 means no user is logged in. */
@@ -44,7 +44,7 @@ public class Main {
          * @param Signups  the list of registered users
          * @return true if credentials match a registered user; false otherwise
          */
-        static boolean verifyCredentials(String username, String password, Vector<SignUp> Signups) {
+        public static boolean verifyCredentials(String username, String password, Vector<SignUp> Signups) {
             for (int i = 0; i < Signups.size(); i++) {
                 if (username.equals(Signups.get(i).username) && password.equals(Signups.get(i).password)) {
                     currentUser = Signups.get(i).UserId;
@@ -62,7 +62,7 @@ public class Main {
          * @param password the password to log in with
          * @param Signups  the list of registered users
          */
-        static void login(String username, String password, Vector<SignUp> Signups) {
+        public static void login(String username, String password, Vector<SignUp> Signups) {
             if (verifyCredentials(username, password, Signups)) {
                 success();
             } else {
@@ -73,14 +73,14 @@ public class Main {
         /**
          * Prints a success message to the console upon successful login.
          */
-        static void success() {
+        public static void success() {
             System.out.println("Login successful");
         }
 
         /**
          * Prints a failure message to the console if login fails.
          */
-        static void fail() {
+        public static void fail() {
             System.out.println("Login failed: invalid credentials");
         }
     }
@@ -125,14 +125,14 @@ public class Main {
          * @param email    the email to verify
          * @return true if credentials are valid; false otherwise
          */
-        static boolean verifyCredentials(String username, String password, String email) {
+        public static boolean verifyCredentials(String username, String password, String email) {
             return username.length() >= 3 && password.length() >= 8 && email.contains("@") && email.contains(".");
         }
 
         /**
          * Attempts to register the user by validating credentials.
          */
-        void register() {
+        public void register() {
             if (verifyCredentials(this.username, this.password, this.email)) {
                 success();
                 registered = true;
@@ -142,12 +142,12 @@ public class Main {
         }
 
         /** Displays success message after successful registration. */
-        static void success() {
+        public static void success() {
             System.out.println("Registration successful");
         }
 
         /** Displays failure message if registration fails. */
-        static void fail() {
+        public static void fail() {
             System.out.println("Registration failed: invalid credentials");
         }
     }
@@ -192,7 +192,7 @@ public class Main {
          * @param date   the date of the income entry
          * @return true if the income date is valid (future date); false otherwise
          */
-        static boolean verifyIncome(String source, double amount, String date) {
+        public static boolean verifyIncome(String source, double amount, String date) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 java.time.LocalDate end = java.time.LocalDate.parse(date, formatter);
@@ -210,7 +210,7 @@ public class Main {
          * @param amount the income amount
          * @param date   the date of the income
          */
-        static void saveIncome(String source, double amount, String date) {
+        public static void saveIncome(String source, double amount, String date) {
             if (verifyIncome(source, amount, date)) {
                 System.out.println("Income saved successfully:");
             } else {
@@ -219,7 +219,7 @@ public class Main {
         }
 
         /** Displays the income entry details. */
-        void displayIncome() {
+        public void displayIncome() {
             System.out.println("Source: " + source);
             System.out.println("Amount: " + amount);
             System.out.println("Date: " + date);
@@ -233,7 +233,7 @@ public class Main {
          * @param i             the index of the income entry to update
          * @param Track_Incomes the list of all income entries
          */
-        void updateIncome(int i, Vector<TrackIncome> Track_Incomes) {
+        public void updateIncome(int i, Vector<TrackIncome> Track_Incomes) {
             Scanner scan = new Scanner(System.in);
 
             System.out.println("choose what you want to update :");
@@ -329,7 +329,7 @@ public class Main {
          *
          * @return true if the end date is valid and in the future, false otherwise
          */
-        boolean verifyBudget() {
+        public boolean verifyBudget() {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 java.time.LocalDate end = java.time.LocalDate.parse(endDate, formatter);
@@ -343,7 +343,7 @@ public class Main {
         /**
          * Displays the details of the budget to the console.
          */
-        void displayBudget() {
+        public void displayBudget() {
             System.out.println("budget: " + totalAmount);
             System.out.println("expenseLimit: " + expenseLimit);
             System.out.println("startDate: " + startDate);
@@ -358,7 +358,7 @@ public class Main {
          * @param i       the index of the budget entry in the list
          * @param Budgets the list of budget entries
          */
-        void updateBudget(int i, Vector<Budget> Budgets) {
+        public void updateBudget(int i, Vector<Budget> Budgets) {
             Scanner scan = new Scanner(System.in);
 
             System.out.println("choose what you want to update :");
@@ -464,7 +464,7 @@ public class Main {
          *
          * @return true if the reminder is set for a future time, false otherwise
          */
-        boolean validateReminder() {
+        public boolean validateReminder() {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 LocalDateTime reminderDateTime = LocalDateTime.parse(ReminderDate + " " + ReminderTime, formatter);
@@ -478,7 +478,7 @@ public class Main {
         /**
          * Displays the reminder's details in the console.
          */
-        void viewRemiders() {
+        public void viewRemiders() {
             System.out.println("title: " + Title);
             System.out.println("reminder date: " + ReminderDate);
             System.out.println("reminder time: " + ReminderTime);
@@ -492,7 +492,7 @@ public class Main {
          * @param i         the index of the reminder in the list
          * @param Reminders the list of all reminders
          */
-        static void editReminder(int i, Vector<Reminder> Reminders) {
+        public void editReminder(int i, Vector<Reminder> Reminders) {
             Scanner scan = new Scanner(System.in);
 
             System.out.println("choose what you want to update: ");
@@ -574,7 +574,7 @@ public class Main {
          *
          * @return true if the date is valid and in the future, false otherwise
          */
-        boolean validateExpense() {
+        public boolean validateExpense() {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 java.time.LocalDate end = java.time.LocalDate.parse(date, formatter);
@@ -588,14 +588,14 @@ public class Main {
         /**
          * Displays a message confirming the expense has been saved.
          */
-        static void save_Expense() {
+        public static void save_Expense() {
             System.out.println("Expense saved successfully");
         }
 
         /**
          * Displays all the details of this expense entry.
          */
-        void Display_Expense() {
+        public void Display_Expense() {
             System.out.println("amount: " + amount);
             System.out.println("category:" + category);
             System.out.println("date: " + date);
@@ -610,7 +610,7 @@ public class Main {
          * @param i        the index of the expense in the list
          * @param Expenses the list of all expenses
          */
-        static void Edit_Expense(int i, Vector<Expense> Expenses) {
+        public void Edit_Expense(int i, Vector<Expense> Expenses) {
             Scanner scan = new Scanner(System.in);
 
             System.out.println("choose what you want to update :");
@@ -723,7 +723,10 @@ public class Main {
             this.Track_Incomes = Track_Incomes;
         }
     }
-
+    /**
+     * Entry point of the application.
+     * @param args Command-line arguments
+     */
     static public void main(String[] args) {
         String filename = "multi_lists.dat";
 
