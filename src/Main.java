@@ -1,69 +1,137 @@
 import java.io.*;
-import java.util.*;
-import java.util.Vector;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-
-
+/**
+ * Main class containing the Login inner class and global user state.
+ */
 public class Main {
-    static int currentUser = -1 ;
+    /** The ID of the currently logged-in user. -1 means no user is logged in. */
+    static int currentUser = -1;
+
+    /** Indicates whether a user is registered. */
     static boolean registered = false;
-    public class Login implements Serializable{
 
+    /**
+     * Inner class representing the login functionality.
+     * Implements Serializable to allow object serialization.
+     */
+    public class Login implements Serializable {
 
-        String email;
+        /** The username of the login. */
+        String username;
+
+        /** The password of the login. */
         String password;
-        public Login(String email, String password) {
-            this.email = email;
+
+        /**
+         * Constructs a Login object with the specified username and password.
+         *
+         * @param username the user's username
+         * @param password the user's password
+         */
+        public Login(String username, String password) {
+            this.username = username;
             this.password = password;
         }
-        static boolean verifyCredentials(String username, String password, Vector<SignUp>Signups) {
-            for(int i = 0 ; i < Signups.size() ; i++)
-            {
-                if(username.equals(Signups.get(i).username) && password.equals(Signups.get(i).password))
-                {
-                    currentUser = Signups.get(i).UserId ;
+
+        /**
+         * Verifies the provided credentials against a list of registered users.
+         *
+         * @param username the username to verify
+         * @param password the password to verify
+         * @param Signups  the list of registered users
+         * @return true if credentials match a registered user; false otherwise
+         */
+        static boolean verifyCredentials(String username, String password, Vector<SignUp> Signups) {
+            for (int i = 0; i < Signups.size(); i++) {
+                if (username.equals(Signups.get(i).username) && password.equals(Signups.get(i).password)) {
+                    currentUser = Signups.get(i).UserId;
                     return true;
                 }
             }
             return false;
         }
-        static void login(String email, String password, Vector<SignUp>Signups) {
-            if (verifyCredentials(email, password, Signups)) {
+
+        /**
+         * Attempts to log in with the provided credentials.
+         * Displays success or failure messages accordingly.
+         *
+         * @param username the username to log in with
+         * @param password the password to log in with
+         * @param Signups  the list of registered users
+         */
+        static void login(String username, String password, Vector<SignUp> Signups) {
+            if (verifyCredentials(username, password, Signups)) {
                 success();
             } else {
                 fail();
             }
         }
+
+        /**
+         * Prints a success message to the console upon successful login.
+         */
         static void success() {
             System.out.println("Login successful");
         }
+
+        /**
+         * Prints a failure message to the console if login fails.
+         */
         static void fail() {
             System.out.println("Login failed: invalid credentials");
         }
     }
 
+    /**
+     * Handles user registration including credential validation.
+     */
+    static public class SignUp implements Serializable {
 
-
-    static public class SignUp implements Serializable  {
-
+        /** Unique identifier for the user. */
         int UserId;
+
+        /** Username of the user. */
         String username;
+
+        /** Email address of the user. */
         String email;
+
+        /** Password of the user. */
         String password;
 
-        public SignUp(int UserId,String username, String password, String email) {
+        /**
+         * Constructs a SignUp object with the specified user details.
+         *
+         * @param UserId   the user's unique ID
+         * @param username the user's chosen username
+         * @param password the user's chosen password
+         * @param email    the user's email address
+         */
+        public SignUp(int UserId, String username, String password, String email) {
             this.UserId = UserId;
             this.username = username;
             this.password = password;
             this.email = email;
         }
 
+        /**
+         * Verifies the validity of user credentials.
+         *
+         * @param username the username to verify
+         * @param password the password to verify
+         * @param email    the email to verify
+         * @return true if credentials are valid; false otherwise
+         */
         static boolean verifyCredentials(String username, String password, String email) {
             return username.length() >= 3 && password.length() >= 8 && email.contains("@") && email.contains(".");
         }
 
+        /**
+         * Attempts to register the user by validating credentials.
+         */
         void register() {
             if (verifyCredentials(this.username, this.password, this.email)) {
                 success();
@@ -73,29 +141,57 @@ public class Main {
             }
         }
 
-
+        /** Displays success message after successful registration. */
         static void success() {
             System.out.println("Registration successful");
         }
 
+        /** Displays failure message if registration fails. */
         static void fail() {
             System.out.println("Registration failed: invalid credentials");
         }
     }
 
+    /**
+     * Tracks income entries for users including creation, validation, and updates.
+     */
     static public class TrackIncome implements Serializable {
+
+        /** ID of the user this income entry belongs to. */
         int UserId;
+
+        /** Source of the income. */
         String source;
+
+        /** Amount of the income. */
         double amount;
+
+        /** Date associated with the income (expected format: yyyy-MM-dd). */
         String date;
 
-        public TrackIncome(int UserId,String source, double amount, String date) {
+        /**
+         * Constructs a TrackIncome object with given parameters.
+         *
+         * @param UserId the user's ID
+         * @param source the income source
+         * @param amount the income amount
+         * @param date   the date of the income entry
+         */
+        public TrackIncome(int UserId, String source, double amount, String date) {
             this.UserId = UserId;
             this.source = source;
             this.amount = amount;
             this.date = date;
         }
 
+        /**
+         * Validates the income data (especially the date format and logic).
+         *
+         * @param source the income source
+         * @param amount the income amount
+         * @param date   the date of the income entry
+         * @return true if the income date is valid (future date); false otherwise
+         */
         static boolean verifyIncome(String source, double amount, String date) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -107,7 +203,13 @@ public class Main {
             }
         }
 
-
+        /**
+         * Saves the income data if valid.
+         *
+         * @param source the income source
+         * @param amount the income amount
+         * @param date   the date of the income
+         */
         static void saveIncome(String source, double amount, String date) {
             if (verifyIncome(source, amount, date)) {
                 System.out.println("Income saved successfully:");
@@ -116,6 +218,7 @@ public class Main {
             }
         }
 
+        /** Displays the income entry details. */
         void displayIncome() {
             System.out.println("Source: " + source);
             System.out.println("Amount: " + amount);
@@ -123,27 +226,37 @@ public class Main {
             System.out.println("==================");
         }
 
-        void updateIncome(int i,Vector<TrackIncome>Track_Incomes) {
+        /**
+         * Updates a selected field (source, amount, or date) of the income entry at a
+         * given index.
+         *
+         * @param i             the index of the income entry to update
+         * @param Track_Incomes the list of all income entries
+         */
+        void updateIncome(int i, Vector<TrackIncome> Track_Incomes) {
             Scanner scan = new Scanner(System.in);
-
 
             System.out.println("choose what you want to update :");
             Track_Incomes.get(i).displayIncome();
             System.out.println("1 - source");
             System.out.println("2 - amount");
             System.out.println("3 - date");
+            System.out.print("Enter your choice: ");
             int choice = scan.nextInt();
-            while(choice<1 || choice>3){
+
+            while (choice < 1 || choice > 3) {
                 System.out.println("Invalid choice");
                 System.out.println("choose what you want to update :");
                 choice = scan.nextInt();
             }
-            if(choice==1){
+
+            if (choice == 1) {
                 System.out.println("enter source: ");
                 String source = scan.next();
                 Track_Incomes.get(i).source = source;
             }
-            if(choice==2){
+
+            if (choice == 2) {
                 double amount;
                 while (true) {
                     System.out.print("Enter amount: ");
@@ -156,7 +269,8 @@ public class Main {
                 }
                 Track_Incomes.get(i).amount = amount;
             }
-            if(choice==3){
+
+            if (choice == 3) {
                 String date;
                 while (true) {
                     System.out.print("Enter date (in this format yyyy-MM-dd): ");
@@ -170,18 +284,39 @@ public class Main {
                 Track_Incomes.get(i).date = date;
             }
         }
-
     }
 
-    static public class Budget implements Serializable  {
+    /**
+     * Represents a user's budget configuration including total budget,
+     * expense limit, and active date range.
+     */
+    static public class Budget implements Serializable {
 
+        /** The user ID associated with the budget. */
         int userId;
+
+        /** The total budget amount available. */
         double totalAmount;
+
+        /** The maximum allowed expense within the budget period. */
         double expenseLimit;
+
+        /** The start date of the budget (format: yyyy-MM-dd). */
         String startDate;
+
+        /** The end date of the budget (format: yyyy-MM-dd). */
         String endDate;
 
-        public Budget(int userId, double totalAmount,double expenseLimit, String startDate, String endDate){
+        /**
+         * Constructs a Budget object with specified details.
+         *
+         * @param userId       the ID of the user
+         * @param totalAmount  the total budget amount
+         * @param expenseLimit the maximum expense allowed
+         * @param startDate    the start date of the budget
+         * @param endDate      the end date of the budget
+         */
+        public Budget(int userId, double totalAmount, double expenseLimit, String startDate, String endDate) {
             this.userId = userId;
             this.totalAmount = totalAmount;
             this.expenseLimit = expenseLimit;
@@ -189,7 +324,12 @@ public class Main {
             this.endDate = endDate;
         }
 
-        boolean verifyBudget(){
+        /**
+         * Verifies if the budget's end date is a future date.
+         *
+         * @return true if the end date is valid and in the future, false otherwise
+         */
+        boolean verifyBudget() {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 java.time.LocalDate end = java.time.LocalDate.parse(endDate, formatter);
@@ -200,7 +340,10 @@ public class Main {
             }
         }
 
-        void displayBudget(){
+        /**
+         * Displays the details of the budget to the console.
+         */
+        void displayBudget() {
             System.out.println("budget: " + totalAmount);
             System.out.println("expenseLimit: " + expenseLimit);
             System.out.println("startDate: " + startDate);
@@ -208,84 +351,119 @@ public class Main {
             System.out.println("====================");
         }
 
-        void updateBudget(int i,Vector<Budget>Budgets) {
+        /**
+         * Allows updating of a budget field (amount, expense limit, or end date) by
+         * user input.
+         *
+         * @param i       the index of the budget entry in the list
+         * @param Budgets the list of budget entries
+         */
+        void updateBudget(int i, Vector<Budget> Budgets) {
             Scanner scan = new Scanner(System.in);
-
 
             System.out.println("choose what you want to update :");
             Budgets.get(i).displayBudget();
             System.out.println("1 - budget");
             System.out.println("2 - expenseLimit");
             System.out.println("3 - endDate");
+            System.out.print("Enter your choice: ");
             int choice = scan.nextInt();
-            while(choice<1 || choice>3){
+
+            while (choice < 1 || choice > 3) {
                 System.out.println("Invalid choice");
                 System.out.println("choose what you want to update :");
                 choice = scan.nextInt();
             }
-            if(choice==1){
+
+            if (choice == 1) {
                 double budget;
                 while (true) {
                     System.out.print("Enter a budget: ");
                     budget = scan.nextInt();
-                    if(budget > 0){
+                    if (budget > 0) {
                         break;
-                    }
-                    else{
+                    } else {
                         System.out.println("Invalid budget. Please enter a valid budget.");
                     }
                 }
                 Budgets.get(i).totalAmount = budget;
             }
-            if(choice==2){
+
+            if (choice == 2) {
                 double expenseLimit;
-                while(true){
+                while (true) {
                     System.out.print("Enter expense limit: ");
                     expenseLimit = scan.nextInt();
-                    if(expenseLimit > 0 && expenseLimit <= totalAmount){
+                    if (expenseLimit > 0 && expenseLimit <= totalAmount) {
                         break;
-                    }
-                    else{
-                        System.out.println("Invalid expense limit. expense limit must be greater than 0 and less than or equal to budget.");
+                    } else {
+                        System.out.println(
+                                "Invalid expense limit. expense limit must be greater than 0 and less than or equal to budget.");
                     }
                 }
                 Budgets.get(i).expenseLimit = expenseLimit;
             }
-            if(choice==3){
+
+            if (choice == 3) {
                 String endDate;
                 while (true) {
                     System.out.print("Enter end date (in this format: yyyy-MM-dd): ");
                     endDate = scan.next();
                     Budgets.get(i).endDate = endDate;
-                    if(Budgets.get(i).verifyBudget()){
+                    if (Budgets.get(i).verifyBudget()) {
                         break;
-                    }
-                    else{
+                    } else {
                         System.out.println("Invalid date. Please enter a valid date (in future).");
                     }
                 }
             }
         }
-
     }
 
-
+    /**
+     * Represents a reminder set by a user with a title, date, time, and status for
+     * notification.
+     */
     static public class Reminder implements Serializable {
 
+        /** Static ID for reminders (could be used for auto-increment if needed). */
         static int ReminderId;
+
+        /** ID of the user to whom this reminder belongs. */
         int UserId;
+
+        /** Title of the reminder. */
         String Title;
+
+        /** Date of the reminder (format: yyyy-MM-dd). */
         String ReminderDate;
+
+        /** Time of the reminder (format: HH:mm). */
         String ReminderTime;
+
+        /** Indicates whether the reminder notification has been sent. */
         boolean notificationSend;
 
-        public Reminder(int UserId, String Title,String reminderDate, String reminderTime){
+        /**
+         * Constructs a new Reminder with specified user ID, title, date, and time.
+         *
+         * @param UserId       the ID of the user
+         * @param Title        the title of the reminder
+         * @param reminderDate the date for the reminder
+         * @param reminderTime the time for the reminder
+         */
+        public Reminder(int UserId, String Title, String reminderDate, String reminderTime) {
             this.UserId = UserId;
             this.Title = Title;
             this.ReminderDate = reminderDate;
             this.ReminderTime = reminderTime;
         }
 
+        /**
+         * Validates whether the reminder's date and time is in the future.
+         *
+         * @return true if the reminder is set for a future time, false otherwise
+         */
         boolean validateReminder() {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -297,60 +475,93 @@ public class Main {
             }
         }
 
-
-        void viewRemiders(){
-            System.out.println("title :" + Title);
-            System.out.println("reminder date:" + ReminderDate);
-            System.out.println("reminder time :" + ReminderTime);
+        /**
+         * Displays the reminder's details in the console.
+         */
+        void viewRemiders() {
+            System.out.println("title: " + Title);
+            System.out.println("reminder date: " + ReminderDate);
+            System.out.println("reminder time: " + ReminderTime);
+            System.out.println("=========================");
         }
 
-        static void editReminder(int i, Vector<Reminder>Reminders){
+        /**
+         * Allows the user to edit a specific reminder by choosing to update the title
+         * or the date and time.
+         *
+         * @param i         the index of the reminder in the list
+         * @param Reminders the list of all reminders
+         */
+        static void editReminder(int i, Vector<Reminder> Reminders) {
             Scanner scan = new Scanner(System.in);
 
-
-            System.out.println("choose what you want to update :");
+            System.out.println("choose what you want to update: ");
             Reminders.get(i).viewRemiders();
             System.out.println("1 - title");
             System.out.println("2 - reminder date and time");
+            System.out.print("Enter your choice: ");
             int choice = scan.nextInt();
-            while(choice<1 || choice>2){
+
+            while (choice < 1 || choice > 2) {
                 System.out.println("Invalid choice");
-                System.out.println("choose what you want to update :");
+                System.out.print("choose what you want to update: ");
                 choice = scan.nextInt();
             }
-            if(choice==1){
+
+            if (choice == 1) {
                 System.out.print("Enter title: ");
                 String title = scan.next();
+                Reminders.get(i).Title = title;
             }
-            if(choice==2){
+
+            if (choice == 2) {
                 while (true) {
                     System.out.print("Enter date and time (in this format: yyyy-MM-dd HH:mm): ");
                     String date = scan.next();
                     String time = scan.next();
                     Reminders.get(i).ReminderDate = date;
                     Reminders.get(i).ReminderTime = time;
-                    if(Reminders.get(i).validateReminder()){
+                    if (Reminders.get(i).validateReminder()) {
                         break;
-                    }
-                    else{
+                    } else {
                         System.out.println("Invalid date and time. Please enter a valid date and time (in future).");
                     }
                 }
             }
         }
-
     }
 
-
-
+    /**
+     * Represents an expense entry made by a user including amount, category, date,
+     * and payment method.
+     */
     static public class Expense implements Serializable {
+
+        /** ID of the user who recorded this expense. */
         int UserId;
+
+        /** Amount spent in the expense. */
         double amount;
+
+        /** Category of the expense (e.g., food, transport, etc.). */
         String category;
+
+        /** Date of the expense (format: yyyy-MM-dd). */
         String date;
+
+        /** Method of payment used (e.g., Cash, Fawry, Credit Card, e-wallet). */
         String paymentmethod;
 
-        public Expense(int UserId, double amount, String category, String date, String paymentmethod){
+        /**
+         * Constructs a new Expense object with specified details.
+         *
+         * @param UserId        the ID of the user
+         * @param amount        the amount spent
+         * @param category      the expense category
+         * @param date          the date of the expense
+         * @param paymentmethod the payment method used
+         */
+        public Expense(int UserId, double amount, String category, String date, String paymentmethod) {
             this.UserId = UserId;
             this.amount = amount;
             this.category = category;
@@ -358,7 +569,12 @@ public class Main {
             this.paymentmethod = paymentmethod;
         }
 
-        boolean validateExpense(){
+        /**
+         * Validates whether the expense date is in the future.
+         *
+         * @return true if the date is valid and in the future, false otherwise
+         */
+        boolean validateExpense() {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 java.time.LocalDate end = java.time.LocalDate.parse(date, formatter);
@@ -369,19 +585,33 @@ public class Main {
             }
         }
 
-        static void save_Expense(){
+        /**
+         * Displays a message confirming the expense has been saved.
+         */
+        static void save_Expense() {
             System.out.println("Expense saved successfully");
         }
-        void Display_Expense(){
-            System.out.println("amount :" + amount);
+
+        /**
+         * Displays all the details of this expense entry.
+         */
+        void Display_Expense() {
+            System.out.println("amount: " + amount);
             System.out.println("category:" + category);
-            System.out.println("date :" + date);
-            System.out.println("paymentmethod:" + paymentmethod);
+            System.out.println("date: " + date);
+            System.out.println("paymentmethod: " + paymentmethod);
+            System.out.println("====================");
         }
 
-        static void Edit_Expense(int i, Vector<Expense>Expenses){
+        /**
+         * Allows editing of a specific expense in a given list.
+         * User can update amount, category, date, or payment method.
+         *
+         * @param i        the index of the expense in the list
+         * @param Expenses the list of all expenses
+         */
+        static void Edit_Expense(int i, Vector<Expense> Expenses) {
             Scanner scan = new Scanner(System.in);
-
 
             System.out.println("choose what you want to update :");
             Expenses.get(i).Display_Expense();
@@ -389,78 +619,103 @@ public class Main {
             System.out.println("2 - category");
             System.out.println("3 - date");
             System.out.println("4 - paymentmethod");
+            System.out.print("Enter your choice: ");
             int choice = scan.nextInt();
-            while(choice<1 || choice>4){
+
+            while (choice < 1 || choice > 4) {
                 System.out.println("Invalid choice");
-                System.out.println("choose what you want to update :");
+                System.out.print("choose what you want to update: ");
                 choice = scan.nextInt();
             }
-            if(choice==1){
+
+            if (choice == 1) {
                 double amount;
-                while(true){
+                while (true) {
                     System.out.print("Enter amount: ");
                     amount = scan.nextInt();
-                    if(amount > 0){
+                    if (amount > 0) {
                         break;
-                    }
-                    else{
+                    } else {
                         System.out.println("Invalid amount. Amount must be greater than 0.");
                     }
                 }
                 Expenses.get(i).amount = amount;
             }
-            if(choice==2){
+
+            if (choice == 2) {
                 System.out.print("Enter category: ");
                 String category = scan.next();
                 Expenses.get(i).category = category;
             }
-            if(choice==3){
+
+            if (choice == 3) {
                 String paymentmethod;
                 while (true) {
                     System.out.print("Enter payment method: ");
                     paymentmethod = scan.next();
-                    if(paymentmethod.toLowerCase().equals("cash") || paymentmethod.toLowerCase().equals("fawry")
+                    if (paymentmethod.toLowerCase().equals("cash") || paymentmethod.toLowerCase().equals("fawry")
                             || paymentmethod.toLowerCase().equals("credit card")
-                            || paymentmethod.toLowerCase().equals("e-wallet")){
+                            || paymentmethod.toLowerCase().equals("e-wallet")) {
                         break;
-                    }
-                    else{
-                        System.out.println("Invalid payment method. Please enter a valid payment method(Cash, Fawry, Credit Card, e-wallet).");
+                    } else {
+                        System.out.println(
+                                "Invalid payment method. Please enter a valid payment method (Cash, Fawry, Credit Card, e-wallet).");
                     }
                 }
                 Expenses.get(i).paymentmethod = paymentmethod;
             }
-            if(choice==4){
+
+            if (choice == 4) {
                 String date;
-                while(true){
+                while (true) {
                     System.out.print("Enter date (in this format: yyyy-MM-dd): ");
                     date = scan.next();
                     Expenses.get(i).date = date;
-                    if(Expenses.get(i).validateExpense()){
+                    if (Expenses.get(i).validateExpense()) {
                         break;
-                    }
-                    else{
+                    } else {
                         System.out.println("Invalid date. Please enter a valid date (in future).");
                     }
                 }
             }
         }
-
-        static void Track_Expense(){
-
-        }
     }
 
-
+    /**
+     * A container class that holds all the application data in serialized form.
+     * Used for saving and loading persistent data (e.g., to/from a file).
+     */
     static class DataContainer implements Serializable {
+
+        /** Serialization identifier for version control. */
         private static final long serialVersionUID = 1L;
+
+        /** List of all registered users. */
         Vector<SignUp> SignUps;
+
+        /** List of all budgets created by users. */
         Vector<Budget> Budgets;
+
+        /** List of all reminders set by users. */
         Vector<Reminder> Reminders;
+
+        /** List of all expenses recorded by users. */
         Vector<Expense> Expenses;
+
+        /** List of all income records tracked by users. */
         Vector<TrackIncome> Track_Incomes;
 
-        public DataContainer(Vector<SignUp> SignUps, Vector<Budget> Budgets, Vector<Reminder> reminders, Vector<Expense> expenses, Vector<TrackIncome> Track_Incomes) {
+        /**
+         * Constructs a new DataContainer with the given application data.
+         *
+         * @param SignUps       the list of user registrations
+         * @param Budgets       the list of budgets
+         * @param reminders     the list of reminders
+         * @param expenses      the list of expenses
+         * @param Track_Incomes the list of income records
+         */
+        public DataContainer(Vector<SignUp> SignUps, Vector<Budget> Budgets, Vector<Reminder> reminders,
+                Vector<Expense> expenses, Vector<TrackIncome> Track_Incomes) {
             this.SignUps = SignUps;
             this.Budgets = Budgets;
             this.Reminders = reminders;
@@ -488,7 +743,7 @@ public class Main {
                 DataContainer loaded = (DataContainer) ois.readObject();
                 SignUps = loaded.SignUps;
                 Budgets = loaded.Budgets;
-                Reminders = loaded.Reminders ;
+                Reminders = loaded.Reminders;
                 Expenses = loaded.Expenses;
                 Track_Incomes = loaded.Track_Incomes;
             } catch (IOException | ClassNotFoundException e) {
@@ -496,12 +751,13 @@ public class Main {
                 return;
             }
         }
-        int choice ;
+        int choice;
         Scanner scan = new Scanner(System.in);
-        while(currentUser==-1){
+        while (currentUser == -1) {
             System.out.println("Hello, Sir!");
             System.out.println("1 - Sign up");
             System.out.println("2 - Log in");
+            System.out.print("Enter your choice: ");
             choice = scan.nextInt();
             if (choice == 1) {
                 System.out.print("Enter username: ");
@@ -512,7 +768,7 @@ public class Main {
                 String password = scan.next();
                 SignUp signUp = new SignUp(SignUps.size(), username, password, email);
                 signUp.register();
-                if(!registered)
+                if (!registered)
                     continue;
                 SignUps.add(signUp);
                 System.out.println("====================");
@@ -531,7 +787,7 @@ public class Main {
                 Login.login(username, password, SignUps);
             }
         }
-        while(true){
+        while (true) {
             System.out.println("What would you like to do?");
             System.out.println("1. Incomes");
             System.out.println("2. Budgets");
@@ -541,8 +797,7 @@ public class Main {
             System.out.println("6. Exit without Saving");
             System.out.print("Enter your choice: ");
             choice = scan.nextInt();
-            while(choice<1 || choice>6)
-            {
+            while (choice < 1 || choice > 6) {
                 System.out.println("Invalid choice. Please enter a valid choice.");
                 System.out.print("Enter your choice: ");
                 choice = scan.nextInt();
@@ -557,10 +812,16 @@ public class Main {
                 System.out.println("3. update an income");
                 System.out.println("4. delete an income ");
                 System.out.println("5. Back to main menu");
+                System.out.print("Enter your choice: ");
                 choice = scan.nextInt();
-                while(choice<1 || choice>5){
+                while (choice < 1 || choice > 5) {
                     System.out.println("Invalid option. Please enter a valid option.");
+                    System.out.print("Enter your choice: ");
                     choice = scan.nextInt();
+                }
+                if (choice != 2 && choice != 5 && Track_Incomes.size() == 0) {
+                    System.out.println("No incomes found. Please add an income.");
+                    continue;
                 }
                 if (choice == 1) {
                     for (int i = 0; i < Track_Incomes.size(); i++) {
@@ -657,10 +918,16 @@ public class Main {
                 System.out.println("3. update a budget");
                 System.out.println("4. delete a budget ");
                 System.out.println("5. Back to main menu");
+                System.out.print("Enter your choice: ");
                 choice = scan.nextInt();
-                while(choice<1 || choice>5){
+                while (choice < 1 || choice > 5) {
                     System.out.println("Invalid option. Please enter a valid option.");
+                    System.out.print("Enter your choice: ");
                     choice = scan.nextInt();
+                }
+                if (choice != 2 && choice != 5 && Budgets.size() == 0) {
+                    System.out.println("No budgets found. Please add a budget.");
+                    continue;
                 }
                 if (choice == 1) {
                     for (int i = 0; i < Budgets.size(); i++) {
@@ -687,7 +954,8 @@ public class Main {
                         if (expenseLimit > 0 && expenseLimit <= budget) {
                             break;
                         } else {
-                            System.out.println("Invalid expense limit. expense limit must be greater than 0 and less than or equal to budget.");
+                            System.out.println(
+                                    "Invalid expense limit. expense limit must be greater than 0 and less than or equal to budget.");
                         }
                     }
                     String startDate = formattedDateTime;
@@ -758,7 +1026,6 @@ public class Main {
                     }
                 }
 
-
             }
 
             else if (choice == 3) {
@@ -769,10 +1036,16 @@ public class Main {
                 System.out.println("3. update a reminder");
                 System.out.println("4. delete a reminder");
                 System.out.println("5. Back to main menu");
+                System.out.print("Enter your choice: ");
                 choice = scan.nextInt();
-                while(choice<1 || choice>5){
+                while (choice < 1 || choice > 5) {
                     System.out.println("Invalid option. Please enter a valid option.");
+                    System.out.print("Enter your choice: ");
                     choice = scan.nextInt();
+                }
+                if (choice != 2 && choice != 5 && Reminders.size() == 0) {
+                    System.out.println("No reminders found. Please add a reminder.");
+                    continue;
                 }
                 if (choice == 1) {
                     for (int i = 0; i < Reminders.size(); i++) {
@@ -793,7 +1066,8 @@ public class Main {
                         if (reminder.validateReminder()) {
                             break;
                         } else {
-                            System.out.println("Invalid date and time. Please enter a valid date and time (in future).");
+                            System.out
+                                    .println("Invalid date and time. Please enter a valid date and time (in future).");
                         }
                     }
                     Reminders.add(reminder);
@@ -807,11 +1081,11 @@ public class Main {
                             Reminders.get(i).viewRemiders();
                         }
                     }
-                    System.out.println("choose the reminder you want to update :");
+                    System.out.print("choose the reminder you want to update: ");
                     int idx = scan.nextInt();
                     while (idx < 1 || idx > cnt) {
                         System.out.println("Invalid choice");
-                        System.out.println("choose the reminder you want to update :");
+                        System.out.print("choose the reminder you want to update: ");
                         idx = scan.nextInt();
                     }
                     cnt = 0;
@@ -832,11 +1106,11 @@ public class Main {
                             Reminders.get(i).viewRemiders();
                         }
                     }
-                    System.out.println("choose the income you want to delete :");
+                    System.out.print("choose the income you want to delete: ");
                     int idx = scan.nextInt();
                     while (idx < 1 || idx > cnt) {
                         System.out.println("Invalid choice");
-                        System.out.println("choose the income you want to delete :");
+                        System.out.print("choose the income you want to delete: ");
                         idx = scan.nextInt();
                     }
                     cnt = 0;
@@ -850,7 +1124,6 @@ public class Main {
                     }
                 }
 
-
             }
 
             else if (choice == 4) {
@@ -860,10 +1133,16 @@ public class Main {
                 System.out.println("3. update an expense");
                 System.out.println("4. delete an expense");
                 System.out.println("5. Back to main menu");
+                System.out.print("Enter your choice: ");
                 choice = scan.nextInt();
-                while(choice<1 || choice>5){
+                while (choice < 1 || choice > 5) {
                     System.out.println("Invalid option. Please enter a valid option.");
+                    System.out.print("Enter your choice: ");
                     choice = scan.nextInt();
+                }
+                if (choice != 2 && choice != 5 && Expenses.size() == 0) {
+                    System.out.println("No expenses found. Please add an expense.");
+                    continue;
                 }
                 if (choice == 1) {
                     for (int i = 0; i < Expenses.size(); i++) {
@@ -894,7 +1173,8 @@ public class Main {
                                 || paymentmethod.toLowerCase().equals("e-wallet")) {
                             break;
                         } else {
-                            System.out.println("Invalid payment method. Please enter a valid payment method(Cash, Fawry, Credit Card, e-wallet).");
+                            System.out.println(
+                                    "Invalid payment method. Please enter a valid payment method(Cash, Fawry, Credit Card, e-wallet).");
                         }
 
                     }
@@ -922,11 +1202,11 @@ public class Main {
                             Expenses.get(i).Display_Expense();
                         }
                     }
-                    System.out.println("choose the expense you want to update :");
+                    System.out.print("choose the expense you want to update: ");
                     int idx = scan.nextInt();
                     while (idx < 1 || idx > cnt) {
                         System.out.println("Invalid choice");
-                        System.out.println("choose the expense you want to update :");
+                        System.out.print("choose the expense you want to update: ");
                         idx = scan.nextInt();
                     }
                     cnt = 0;
@@ -947,11 +1227,11 @@ public class Main {
                             Expenses.get(i).Display_Expense();
                         }
                     }
-                    System.out.println("choose the expense you want to delete :");
+                    System.out.print("choose the expense you want to delete: ");
                     int idx = scan.nextInt();
                     while (idx < 1 || idx > cnt) {
                         System.out.println("Invalid choice");
-                        System.out.println("choose the expense you want to delete :");
+                        System.out.print("choose the expense you want to delete: ");
                         idx = scan.nextInt();
                     }
                     cnt = 0;
@@ -971,7 +1251,7 @@ public class Main {
             }
 
             else if (choice == 6) {
-                return ;
+                return;
             }
         }
         // ===== WRITE UPDATED DATA =====
@@ -985,31 +1265,5 @@ public class Main {
             e.printStackTrace();
         }
 
-        // ===== READ BACK TO VERIFY =====
-        try (ObjectInputStream ois = new ObjectInputStream(
-                new FileInputStream(filename))) {
-
-            DataContainer loaded = (DataContainer) ois.readObject();
-
-            System.out.println("\nLoaded SignUps:");
-            loaded.SignUps.forEach(System.out::println);
-
-            System.out.println("\nLoaded Budgets:");
-            loaded.Budgets.forEach(System.out::println);
-
-            System.out.println("\nLoaded Reminders:");
-            loaded.Reminders.forEach(System.out::println);
-
-            System.out.println("\nLoaded Expenses:");
-            loaded.Expenses.forEach(System.out::println);
-
-            System.out.println("\nLoaded Track_Incomes:");
-            loaded.Track_Incomes.forEach(System.out::println);
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 }
-
-
