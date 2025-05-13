@@ -765,6 +765,18 @@ public class Main {
             if (choice == 1) {
                 System.out.print("Enter username: ");
                 String username = scan.next();
+                boolean isValid = false;
+                while (!isValid) {
+                    isValid = true;
+                    for(int i = 0 ; i < SignUps.size() ; i++){
+                        if (username.equals(SignUps.get(i).username)) {
+                            System.out.println("Username already exists. Please choose a different username.");
+                            System.out.print("Enter username: ");
+                            username = scan.next();
+                            isValid = false;
+                        }
+                    }
+                }
                 System.out.print("Enter email: ");
                 String email = scan.next();
                 System.out.print("Enter password: ");
