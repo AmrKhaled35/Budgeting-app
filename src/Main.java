@@ -111,17 +111,66 @@ public class Main {
         static void saveIncome(String source, double amount, String date) {
             if (verifyIncome(source, amount, date)) {
                 System.out.println("Income saved successfully:");
-                displayIncome(source, amount, date);
             } else {
                 System.out.println("Invalid income details. Income not saved.");
             }
         }
 
-        static void displayIncome(String source, double amount, String date) {
+        void displayIncome() {
             System.out.println("Source: " + source);
             System.out.println("Amount: " + amount);
             System.out.println("Date: " + date);
+            System.out.println("==================");
         }
+
+        void updateIncome(int i,Vector<TrackIncome>Track_Incomes) {
+            Scanner scan = new Scanner(System.in);
+
+
+            System.out.println("choose what you want to update :");
+            Track_Incomes.get(i).displayIncome();
+            System.out.println("1 - source");
+            System.out.println("2 - amount");
+            System.out.println("3 - date");
+            int choice = scan.nextInt();
+            while(choice<1 || choice>3){
+                System.out.println("Invalid choice");
+                System.out.println("choose what you want to update :");
+                choice = scan.nextInt();
+            }
+            if(choice==1){
+                System.out.println("enter source: ");
+                String source = scan.next();
+                Track_Incomes.get(i).source = source;
+            }
+            if(choice==2){
+                double amount;
+                while (true) {
+                    System.out.print("Enter amount: ");
+                    amount = scan.nextDouble();
+                    if (amount > 0) {
+                        break;
+                    } else {
+                        System.out.println("Invalid amount. Amount must be greater than 0.");
+                    }
+                }
+                Track_Incomes.get(i).amount = amount;
+            }
+            if(choice==3){
+                String date;
+                while (true) {
+                    System.out.print("Enter date (in this format yyyy-MM-dd): ");
+                    date = scan.next();
+                    if (Track_Incomes.get(i).verifyIncome(source, amount, date)) {
+                        break;
+                    } else {
+                        System.out.println("Invalid date. Please enter a valid date in this format: yyyy-MM-dd.");
+                    }
+                }
+                Track_Incomes.get(i).date = date;
+            }
+        }
+
     }
 
     static public class Budget implements Serializable  {
@@ -148,6 +197,73 @@ public class Main {
                 return end.isAfter(now);
             } catch (Exception e) {
                 return false;
+            }
+        }
+
+        void displayBudget(){
+            System.out.println("budget: " + totalAmount);
+            System.out.println("expenseLimit: " + expenseLimit);
+            System.out.println("startDate: " + startDate);
+            System.out.println("endDate: " + endDate);
+            System.out.println("====================");
+        }
+
+        void updateBudget(int i,Vector<Budget>Budgets) {
+            Scanner scan = new Scanner(System.in);
+
+
+            System.out.println("choose what you want to update :");
+            Budgets.get(i).displayBudget();
+            System.out.println("1 - budget");
+            System.out.println("2 - expenseLimit");
+            System.out.println("3 - endDate");
+            int choice = scan.nextInt();
+            while(choice<1 || choice>3){
+                System.out.println("Invalid choice");
+                System.out.println("choose what you want to update :");
+                choice = scan.nextInt();
+            }
+            if(choice==1){
+                double budget;
+                while (true) {
+                    System.out.print("Enter a budget: ");
+                    budget = scan.nextInt();
+                    if(budget > 0){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid budget. Please enter a valid budget.");
+                    }
+                }
+                Budgets.get(i).totalAmount = budget;
+            }
+            if(choice==2){
+                double expenseLimit;
+                while(true){
+                    System.out.print("Enter expense limit: ");
+                    expenseLimit = scan.nextInt();
+                    if(expenseLimit > 0 && expenseLimit <= totalAmount){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid expense limit. expense limit must be greater than 0 and less than or equal to budget.");
+                    }
+                }
+                Budgets.get(i).expenseLimit = expenseLimit;
+            }
+            if(choice==3){
+                String endDate;
+                while (true) {
+                    System.out.print("Enter end date (in this format: yyyy-MM-dd): ");
+                    endDate = scan.next();
+                    Budgets.get(i).endDate = endDate;
+                    if(Budgets.get(i).verifyBudget()){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid date. Please enter a valid date (in future).");
+                    }
+                }
             }
         }
 
@@ -182,12 +298,45 @@ public class Main {
         }
 
 
-        static void viewRemiders(){
-
+        void viewRemiders(){
+            System.out.println("title :" + Title);
+            System.out.println("reminder date:" + ReminderDate);
+            System.out.println("reminder time :" + ReminderTime);
         }
 
-        static void editReminder(){
+        static void editReminder(int i, Vector<Reminder>Reminders){
+            Scanner scan = new Scanner(System.in);
 
+
+            System.out.println("choose what you want to update :");
+            Reminders.get(i).viewRemiders();
+            System.out.println("1 - title");
+            System.out.println("2 - reminder date and time");
+            int choice = scan.nextInt();
+            while(choice<1 || choice>2){
+                System.out.println("Invalid choice");
+                System.out.println("choose what you want to update :");
+                choice = scan.nextInt();
+            }
+            if(choice==1){
+                System.out.print("Enter title: ");
+                String title = scan.next();
+            }
+            if(choice==2){
+                while (true) {
+                    System.out.print("Enter date and time (in this format: yyyy-MM-dd HH:mm): ");
+                    String date = scan.next();
+                    String time = scan.next();
+                    Reminders.get(i).ReminderDate = date;
+                    Reminders.get(i).ReminderTime = time;
+                    if(Reminders.get(i).validateReminder()){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid date and time. Please enter a valid date and time (in future).");
+                    }
+                }
+            }
         }
 
     }
@@ -223,12 +372,78 @@ public class Main {
         static void save_Expense(){
             System.out.println("Expense saved successfully");
         }
-        static void Display_Expense(){
-
+        void Display_Expense(){
+            System.out.println("amount :" + amount);
+            System.out.println("category:" + category);
+            System.out.println("date :" + date);
+            System.out.println("paymentmethod:" + paymentmethod);
         }
 
-        static void Edit_Expense(){
+        static void Edit_Expense(int i, Vector<Expense>Expenses){
+            Scanner scan = new Scanner(System.in);
 
+
+            System.out.println("choose what you want to update :");
+            Expenses.get(i).Display_Expense();
+            System.out.println("1 - amount");
+            System.out.println("2 - category");
+            System.out.println("3 - date");
+            System.out.println("4 - paymentmethod");
+            int choice = scan.nextInt();
+            while(choice<1 || choice>4){
+                System.out.println("Invalid choice");
+                System.out.println("choose what you want to update :");
+                choice = scan.nextInt();
+            }
+            if(choice==1){
+                double amount;
+                while(true){
+                    System.out.print("Enter amount: ");
+                    amount = scan.nextInt();
+                    if(amount > 0){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid amount. Amount must be greater than 0.");
+                    }
+                }
+                Expenses.get(i).amount = amount;
+            }
+            if(choice==2){
+                System.out.print("Enter category: ");
+                String category = scan.next();
+                Expenses.get(i).category = category;
+            }
+            if(choice==3){
+                String paymentmethod;
+                while (true) {
+                    System.out.print("Enter payment method: ");
+                    paymentmethod = scan.next();
+                    if(paymentmethod.toLowerCase().equals("cash") || paymentmethod.toLowerCase().equals("fawry")
+                            || paymentmethod.toLowerCase().equals("credit card")
+                            || paymentmethod.toLowerCase().equals("e-wallet")){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid payment method. Please enter a valid payment method(Cash, Fawry, Credit Card, e-wallet).");
+                    }
+                }
+                Expenses.get(i).paymentmethod = paymentmethod;
+            }
+            if(choice==4){
+                String date;
+                while(true){
+                    System.out.print("Enter date (in this format: yyyy-MM-dd): ");
+                    date = scan.next();
+                    Expenses.get(i).date = date;
+                    if(Expenses.get(i).validateExpense()){
+                        break;
+                    }
+                    else{
+                        System.out.println("Invalid date. Please enter a valid date (in future).");
+                    }
+                }
+            }
         }
 
         static void Track_Expense(){
@@ -316,160 +531,449 @@ public class Main {
                 Login.login(username, password, SignUps);
             }
         }
-        System.out.println("What would you like to do?");
-        System.out.println("1. Track income");
-        System.out.println("2. Set budget");
-        System.out.println("3. Set reminder");
-        System.out.println("4. Track expense");
-        System.out.print("Enter your choice: ");
-        choice = scan.nextInt();
-        choice += 2;
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd ");
-        String formattedDateTime = currentDateTime.format(formatter);
-        if(choice == 3){
-            System.out.print("Enter source: ");
-            String source = scan.next();
-            double amount;
-            while(true){
-                System.out.print("Enter amount: ");
-                amount = scan.nextDouble();
-                if(amount > 0){
-                    break;
+        while(true){
+            System.out.println("What would you like to do?");
+            System.out.println("1. Incomes");
+            System.out.println("2. Budgets");
+            System.out.println("3. Reminders");
+            System.out.println("4. Expenses");
+            System.out.println("5. Save and Exit");
+            System.out.println("6. Exit without Saving");
+            System.out.print("Enter your choice: ");
+            choice = scan.nextInt();
+            while(choice<1 || choice>6)
+            {
+                System.out.println("Invalid choice. Please enter a valid choice.");
+                System.out.print("Enter your choice: ");
+                choice = scan.nextInt();
+            }
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd ");
+            String formattedDateTime = currentDateTime.format(formatter);
+            if (choice == 1) {
+                System.out.println("Choose an option");
+                System.out.println("1. view incomes");
+                System.out.println("2. add an income");
+                System.out.println("3. update an income");
+                System.out.println("4. delete an income ");
+                System.out.println("5. Back to main menu");
+                choice = scan.nextInt();
+                while(choice<1 || choice>5){
+                    System.out.println("Invalid option. Please enter a valid option.");
+                    choice = scan.nextInt();
                 }
-                else{
-                    System.out.println("Invalid amount. Amount must be greater than 0.");
+                if (choice == 1) {
+                    for (int i = 0; i < Track_Incomes.size(); i++) {
+                        if (Track_Incomes.get(i).UserId == currentUser) {
+                            Track_Incomes.get(i).displayIncome();
+                        }
+                    }
+                }
+                if (choice == 2) {
+                    System.out.print("Enter source: ");
+                    String source = scan.next();
+                    double amount;
+                    while (true) {
+                        System.out.print("Enter amount: ");
+                        amount = scan.nextDouble();
+                        if (amount > 0) {
+                            break;
+                        } else {
+                            System.out.println("Invalid amount. Amount must be greater than 0.");
+                        }
+                    }
+                    TrackIncome trackIncome;
+                    String date;
+                    while (true) {
+                        System.out.print("Enter date (in this format yyyy-MM-dd): ");
+                        date = scan.next();
+                        trackIncome = new TrackIncome(currentUser, source, amount, date);
+                        if (trackIncome.verifyIncome(source, amount, date)) {
+                            break;
+                        } else {
+                            System.out.println("Invalid date. Please enter a valid date in this format: yyyy-MM-dd.");
+                        }
+
+                    }
+                    Track_Incomes.add(trackIncome);
+                    trackIncome.saveIncome(source, amount, date);
+                }
+                if (choice == 3) {
+                    int cnt = 0;
+                    for (int i = 0; i < Track_Incomes.size(); i++) {
+                        if (Track_Incomes.get(i).UserId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Track_Incomes.get(i).displayIncome();
+                        }
+                    }
+                    System.out.println("choose the income you want to update :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the income you want to update :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Track_Incomes.size(); i++) {
+                        if (Track_Incomes.get(i).UserId == currentUser) {
+                            if (++cnt == idx) {
+                                Track_Incomes.get(i).updateIncome(i, Track_Incomes);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (choice == 4) {
+                    int cnt = 0;
+                    for (int i = 0; i < Track_Incomes.size(); i++) {
+                        if (Track_Incomes.get(i).UserId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Track_Incomes.get(i).displayIncome();
+                        }
+                    }
+                    System.out.println("choose the income you want to delete :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the income you want to delete :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Track_Incomes.size(); i++) {
+                        if (Track_Incomes.get(i).UserId == currentUser) {
+                            if (++cnt == idx) {
+                                Track_Incomes.remove(i);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
-            String date;
-            TrackIncome trackIncome;
-            while (true) {
-                System.out.print("Enter date (in this format yyyy-MM-dd): ");
-                date = scan.next();
-                trackIncome = new TrackIncome(currentUser,source, amount, date);
-                if(trackIncome.verifyIncome(source, amount, date)){
-                    break;
+
+            else if (choice == 2) {
+                System.out.println("Choose an option");
+                System.out.println("1. view Budgets");
+                System.out.println("2. add a budget");
+                System.out.println("3. update a budget");
+                System.out.println("4. delete a budget ");
+                System.out.println("5. Back to main menu");
+                choice = scan.nextInt();
+                while(choice<1 || choice>5){
+                    System.out.println("Invalid option. Please enter a valid option.");
+                    choice = scan.nextInt();
                 }
-                else{
-                    System.out.println("Invalid date. Please enter a valid date in this format: yyyy-MM-dd.");
+                if (choice == 1) {
+                    for (int i = 0; i < Budgets.size(); i++) {
+                        if (Budgets.get(i).userId == currentUser) {
+                            Budgets.get(i).displayBudget();
+                        }
+                    }
+                }
+                if (choice == 2) {
+                    double budget;
+                    while (true) {
+                        System.out.print("Enter a budget: ");
+                        budget = scan.nextInt();
+                        if (budget > 0) {
+                            break;
+                        } else {
+                            System.out.println("Invalid budget. Please enter a valid budget.");
+                        }
+                    }
+                    double expenseLimit;
+                    while (true) {
+                        System.out.print("Enter expense limit: ");
+                        expenseLimit = scan.nextInt();
+                        if (expenseLimit > 0 && expenseLimit <= budget) {
+                            break;
+                        } else {
+                            System.out.println("Invalid expense limit. expense limit must be greater than 0 and less than or equal to budget.");
+                        }
+                    }
+                    String startDate = formattedDateTime;
+                    System.out.println("Start date: " + startDate);
+                    String endDate;
+                    Budget budget1;
+                    while (true) {
+                        System.out.print("Enter end date (in this format: yyyy-MM-dd): ");
+                        endDate = scan.next();
+                        budget1 = new Budget(currentUser, budget, expenseLimit, startDate, endDate);
+                        if (budget1.verifyBudget()) {
+                            break;
+                        } else {
+                            System.out.println("Invalid date. Please enter a valid date (in future).");
+                        }
+                    }
+                    Budgets.add(budget1);
+                    System.out.println("Budget set successfully");
+                }
+                if (choice == 3) {
+                    int cnt = 0;
+                    for (int i = 0; i < Budgets.size(); i++) {
+                        if (Budgets.get(i).userId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Budgets.get(i).displayBudget();
+                        }
+                    }
+                    System.out.println("choose the budget you want to update :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the budget you want to update :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Budgets.size(); i++) {
+                        if (Budgets.get(i).userId == currentUser) {
+                            if (++cnt == idx) {
+                                Budgets.get(i).updateBudget(i, Budgets);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (choice == 4) {
+                    int cnt = 0;
+                    for (int i = 0; i < Budgets.size(); i++) {
+                        if (Budgets.get(i).userId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Budgets.get(i).displayBudget();
+                        }
+                    }
+                    System.out.println("choose the income you want to delete :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the income you want to delete :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Budgets.size(); i++) {
+                        if (Budgets.get(i).userId == currentUser) {
+                            if (++cnt == idx) {
+                                Budgets.remove(i);
+                                break;
+                            }
+                        }
+                    }
                 }
 
+
             }
-            Track_Incomes.add(trackIncome);
-            trackIncome.saveIncome(source, amount, date);
+
+            else if (choice == 3) {
+
+                System.out.println("Choose an option");
+                System.out.println("1. view reminders");
+                System.out.println("2. add a reminder");
+                System.out.println("3. update a reminder");
+                System.out.println("4. delete a reminder");
+                System.out.println("5. Back to main menu");
+                choice = scan.nextInt();
+                while(choice<1 || choice>5){
+                    System.out.println("Invalid option. Please enter a valid option.");
+                    choice = scan.nextInt();
+                }
+                if (choice == 1) {
+                    for (int i = 0; i < Reminders.size(); i++) {
+                        if (Reminders.get(i).UserId == currentUser) {
+                            Reminders.get(i).viewRemiders();
+                        }
+                    }
+                }
+                if (choice == 2) {
+                    System.out.print("Enter title: ");
+                    String title = scan.next();
+                    Reminder reminder;
+                    while (true) {
+                        System.out.print("Enter date and time (in this format: yyyy-MM-dd HH:mm): ");
+                        String date = scan.next();
+                        String time = scan.next();
+                        reminder = new Reminder(currentUser, title, date, time);
+                        if (reminder.validateReminder()) {
+                            break;
+                        } else {
+                            System.out.println("Invalid date and time. Please enter a valid date and time (in future).");
+                        }
+                    }
+                    Reminders.add(reminder);
+                    System.out.println("Reminder set successfully");
+                }
+                if (choice == 3) {
+                    int cnt = 0;
+                    for (int i = 0; i < Reminders.size(); i++) {
+                        if (Reminders.get(i).UserId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Reminders.get(i).viewRemiders();
+                        }
+                    }
+                    System.out.println("choose the reminder you want to update :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the reminder you want to update :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Reminders.size(); i++) {
+                        if (Reminders.get(i).UserId == currentUser) {
+                            if (++cnt == idx) {
+                                Reminders.get(i).editReminder(i, Reminders);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (choice == 4) {
+                    int cnt = 0;
+                    for (int i = 0; i < Reminders.size(); i++) {
+                        if (Reminders.get(i).UserId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Reminders.get(i).viewRemiders();
+                        }
+                    }
+                    System.out.println("choose the income you want to delete :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the income you want to delete :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Reminders.size(); i++) {
+                        if (Reminders.get(i).UserId == currentUser) {
+                            if (++cnt == idx) {
+                                Reminders.remove(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
+            else if (choice == 4) {
+                System.out.println("Choose an option");
+                System.out.println("1. view Expenses");
+                System.out.println("2. add an expense");
+                System.out.println("3. update an expense");
+                System.out.println("4. delete an expense");
+                System.out.println("5. Back to main menu");
+                choice = scan.nextInt();
+                while(choice<1 || choice>5){
+                    System.out.println("Invalid option. Please enter a valid option.");
+                    choice = scan.nextInt();
+                }
+                if (choice == 1) {
+                    for (int i = 0; i < Expenses.size(); i++) {
+                        if (Expenses.get(i).UserId == currentUser) {
+                            Expenses.get(i).Display_Expense();
+                        }
+                    }
+                }
+                if (choice == 2) {
+                    double amount;
+                    while (true) {
+                        System.out.print("Enter amount: ");
+                        amount = scan.nextInt();
+                        if (amount > 0) {
+                            break;
+                        } else {
+                            System.out.println("Invalid amount. Amount must be greater than 0.");
+                        }
+                    }
+                    System.out.print("Enter category: ");
+                    String category = scan.next();
+                    String paymentmethod;
+                    while (true) {
+                        System.out.print("Enter payment method: ");
+                        paymentmethod = scan.next();
+                        if (paymentmethod.toLowerCase().equals("cash") || paymentmethod.toLowerCase().equals("fawry")
+                                || paymentmethod.toLowerCase().equals("credit card")
+                                || paymentmethod.toLowerCase().equals("e-wallet")) {
+                            break;
+                        } else {
+                            System.out.println("Invalid payment method. Please enter a valid payment method(Cash, Fawry, Credit Card, e-wallet).");
+                        }
+
+                    }
+
+                    String date;
+                    Expense expense;
+                    while (true) {
+                        System.out.print("Enter date (in this format: yyyy-MM-dd): ");
+                        date = scan.next();
+                        expense = new Expense(currentUser, amount, category, date, paymentmethod);
+                        if (expense.validateExpense()) {
+                            break;
+                        } else {
+                            System.out.println("Invalid date. Please enter a valid date (in future).");
+                        }
+                    }
+                    Expenses.add(expense);
+                    Expense.save_Expense();
+                }
+                if (choice == 3) {
+                    int cnt = 0;
+                    for (int i = 0; i < Expenses.size(); i++) {
+                        if (Expenses.get(i).UserId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Expenses.get(i).Display_Expense();
+                        }
+                    }
+                    System.out.println("choose the expense you want to update :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the expense you want to update :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Expenses.size(); i++) {
+                        if (Expenses.get(i).UserId == currentUser) {
+                            if (++cnt == idx) {
+                                Expenses.get(i).Edit_Expense(i, Expenses);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (choice == 4) {
+                    int cnt = 0;
+                    for (int i = 0; i < Expenses.size(); i++) {
+                        if (Expenses.get(i).UserId == currentUser) {
+                            System.out.println(++cnt + " - ");
+                            Expenses.get(i).Display_Expense();
+                        }
+                    }
+                    System.out.println("choose the expense you want to delete :");
+                    int idx = scan.nextInt();
+                    while (idx < 1 || idx > cnt) {
+                        System.out.println("Invalid choice");
+                        System.out.println("choose the expense you want to delete :");
+                        idx = scan.nextInt();
+                    }
+                    cnt = 0;
+                    for (int i = 0; i < Expenses.size(); i++) {
+                        if (Expenses.get(i).UserId == currentUser) {
+                            if (++cnt == idx) {
+                                Expenses.remove(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            else if (choice == 5) {
+                break;
+            }
+
+            else if (choice == 6) {
+                return ;
+            }
         }
-
-        if(choice == 4){
-
-            double budget;
-            while (true) {
-                System.out.print("Enter a budget: ");
-                budget = scan.nextInt();
-                if(budget > 0){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid budget. Please enter a valid budget.");
-                }
-            }
-            double expenseLimit;
-            while(true){
-                System.out.print("Enter expense limit: ");
-                expenseLimit = scan.nextInt();
-                if(expenseLimit > 0 && expenseLimit <= budget){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid expense limit. expense limit must be greater than 0 and less than or equal to budget.");
-                }
-            }
-            String startDate = formattedDateTime;
-            System.out.println("Start date: " + startDate);
-            String endDate;
-            Budget budget1;
-            while (true) {
-                System.out.print("Enter end date (in this format: yyyy-MM-dd): ");
-                endDate = scan.next();
-                budget1 = new Budget(currentUser,budget, expenseLimit, startDate, endDate);
-                if(budget1.verifyBudget()){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid date. Please enter a valid date (in future).");
-                }
-            }
-            Budgets.add(budget1);
-            System.out.println("Budget set successfully");
-
-        }
-
-        if(choice == 5){
-            System.out.print("Enter title: ");
-            String title = scan.next();
-            Reminder reminder;
-            while (true) {
-                System.out.print("Enter date and time (in this format: yyyy-MM-dd HH:mm): ");
-                String date = scan.next();
-                String time = scan.next();
-                reminder = new Reminder(currentUser,title, date, time);
-                if(reminder.validateReminder()){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid date and time. Please enter a valid date and time (in future).");
-                }
-            }
-            Reminders.add(reminder) ;
-            System.out.println("Reminder set successfully");
-
-        }
-
-        if(choice == 6){
-            double amount;
-            while(true){
-                System.out.print("Enter amount: ");
-                amount = scan.nextInt();
-                if(amount > 0){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid amount. Amount must be greater than 0.");
-                }
-            }
-            System.out.print("Enter category: ");
-            String category = scan.next();
-            String paymentmethod;
-            while (true) {
-                System.out.print("Enter payment method: ");
-                paymentmethod = scan.next();
-                if(paymentmethod.toLowerCase().equals("cash") || paymentmethod.toLowerCase().equals("fawry")
-                        || paymentmethod.toLowerCase().equals("credit card")
-                        || paymentmethod.toLowerCase().equals("e-wallet")){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid payment method. Please enter a valid payment method(Cash, Fawry, Credit Card, e-wallet).");
-                }
-
-            }
-
-            String date;
-            Expense expense;
-            while(true){
-                System.out.print("Enter date (in this format: yyyy-MM-dd): ");
-                date = scan.next();
-                expense = new Expense(currentUser, amount, category, date, paymentmethod);
-                if(expense.validateExpense()){
-                    break;
-                }
-                else{
-                    System.out.println("Invalid date. Please enter a valid date (in future).");
-                }
-            }
-            Expenses.add(expense) ;
-            Expense.save_Expense();
-        }
-
         // ===== WRITE UPDATED DATA =====
         try (ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(filename))) {
