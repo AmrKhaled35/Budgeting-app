@@ -63,7 +63,3 @@ This is a Java-based Personal Finance Management System that helps users track t
    - Record expenses
    - Set reminders
 4. All data is automatically saved when program exits
-
-## Requirements
-- Java Runtime Environment (JRE) 8 or later
-- 100MB disk space for data storage
